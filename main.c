@@ -33,26 +33,29 @@ char str[16];
 
 int main(void)
 {
-    int prox1 = 0;
+    unsigned int prox1 = 0;
     SYSTEMConfigPerformance(40000000);
+    enableInterrupts(); 
     initADC(); 
     initPWM();
-    initLCD();
-    enableInterrupts();     
+    initLCD();        
     initTimer3(); 
     initWheel(); 
     initI2C();//initialize I2C for external sensor
     initVCNL4000();//initialize the sensor with the correct sensor to start working properly
-//    prox = readProximity();
-//    sprintf(str, "  %d", prox); 
-    //printStringLCD("5");
+    clearLCD();
+    prox1 = readProximity();    
+    //prox1 = 3000;
+    sprintf(str, "  %u", prox1); 
+    moveCursorLCD(0,1);
+    printStringLCD(str);
     while(1)
     {
-       prox1 = readProximity();
-       //prox1 = 5;
-       sprintf(str, "  %d", prox1);
-       moveCursorLCD(0,1);
-       printStringLCD(str);       
+//       prox1 = readProximity();
+//       //prox1 = 5;
+//       sprintf(str, "  %d", prox1);
+//       moveCursorLCD(0,1);
+//       printStringLCD("4");       
        potADCVal = potADC(); 
        sensorLeftReading = leftSensorADC();
        sensorMiddleReading = middleSensorADC();
@@ -79,3 +82,16 @@ int main(void)
     return 0;
 }
 
+int readAmbient1(){
+     int data;
+//    unsigned char temp;
+//
+//    temp = i2cRead(COMMAND_0);
+//    i2cWrite(COMMAND_0, 0b10010000 /*temp | 0x10*/); // command the sensor to perform ambient measure
+//
+//    while(!(i2cRead(COMMAND_0)&0b01000000) /*0x20*/); // wait for the proximity data ready bit to be set
+//    data = i2cRead(AMBIENT_RESULT_MSB) << 8;
+//    data |= i2cRead(AMBIENT_RESULT_LSB);
+    data = 3000;
+    return data;
+}

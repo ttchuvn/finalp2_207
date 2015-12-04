@@ -17,10 +17,10 @@
 #define PROXIMITY_MOD 0x8A  // proximity modulator timing
 
 void initVCNL4000(){
-    writeByte(AMBIENT_PARAMETER, 0x0F); //Single conversion mode, 128 average
-    writeByte(IR_CURRENT, 20); // Set IR current to 200mA
-    writeByte(PROXIMITY_FREQ, 3); // 390k Hz
-    writeByte(PROXIMITY_MOD, 0x81); // 129
+    i2cWrite(AMBIENT_PARAMETER, 0x0F); //Single conversion mode, 128 average
+    i2cWrite(IR_CURRENT, 20); // Set IR current to 200mA
+    i2cWrite(PROXIMITY_FREQ, 3); // 390k Hz
+    i2cWrite(PROXIMITY_MOD, 0x81); // 129
     delayUs(900);
 }
 
@@ -28,12 +28,12 @@ unsigned int readProximity(){
     unsigned int data = 0;
     unsigned char temp;
 
-    temp = readByte(COMMAND_0); 
-    writeByte(COMMAND_0, 0b10001000/* temp | 0x08*/); // command the sensor to perform proximity measure
+    temp = i2cRead(COMMAND_0); 
+    i2cWrite(COMMAND_0, 0b10001000/* temp | 0x08*/); // command the sensor to perform proximity measure
 
-    while(!(readByte(COMMAND_0)&0b00100000) /*0x20*/); // wait for proximity data ready bit to be set
-    data = readByte(PROXIMITY_RESULT_MSB) << 8;
-    data |= readByte(PROXIMITY_RESULT_LSB);
+    while(!(i2cRead(COMMAND_0)&0b00100000) /*0x20*/); // wait for proximity data ready bit to be set
+    data = i2cRead(PROXIMITY_RESULT_MSB) << 8;
+    data |= i2cRead(PROXIMITY_RESULT_LSB);
 
     return data;
 }
@@ -42,12 +42,12 @@ unsigned int readAmbient(){
     unsigned int data;
     unsigned char temp;
 
-    temp = readByte(COMMAND_0);
-    writeByte(COMMAND_0, 0b10010000 /*temp | 0x10*/); // command the sensor to perform ambient measure
-
-    while(!(readByte(COMMAND_0)&0b01000000) /*0x20*/); // wait for the proximity data ready bit to be set
-    data = readByte(AMBIENT_RESULT_MSB) << 8;
-    data |= readByte(AMBIENT_RESULT_LSB);
-
+    temp = i2cRead(COMMAND_0);
+    i2cWrite(COMMAND_0, 0b10010000 /*temp | 0x10*/); // command the sensor to perform ambient measure
+//
+//    while(!(i2cRead(COMMAND_0)&0b01000000) /*0x20*/); // wait for the proximity data ready bit to be set
+//    data = i2cRead(AMBIENT_RESULT_MSB) << 8;
+//    data |= i2cRead(AMBIENT_RESULT_LSB);
+    data = 200;
     return data;
 }

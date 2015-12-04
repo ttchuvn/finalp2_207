@@ -11,32 +11,6 @@
 #define SDA TRISDbits.TRISD9
 #define SCL_IN PORTDbits.RD10
 #define SDA_IN PORTDbits.RD9
-// void I2C2_Init(void)
-// {
-// // --- I2C Control Register ---
-// I2C2CONbits.I2CEN   = 0;// Disable I2C
-// I2C2CONbits.I2CSIDL = 1; // Disable I2C in Idle Mode
-// I2C2CONbits.SCLREL  = 1; // Release SCL
-// I2C2CONbits.IPMIEN  = 1; // Disable IPMIEN
-// I2C2CONbits.A10M    = 0; // 7-bit Slave Address
-// I2C2CONbits.DISSLW  = 0; // Enable Slew Rate Control
-// I2C2CONbits.SMEN    = 0; // Disable SMBus Thresholds
-// I2C2CONbits.GCEN    = 0; // Disable General Call
-// I2C2CONbits.STREN   = 0; // Disable Clock Stretching
-// //I2C2CONbits.ACKDT   = 0; // Send Negative ACK During Acknowledgement
-// I2C2CONbits.ACKDT   = 1; // Send NACK During Acknowledgement
-// I2C2CONbits.ACKEN   = 0; // Acknowledge Sequence Not In Progress
-// I2C2CONbits.RCEN    = 0; // Receive Sequence Not In Progress
-// I2C2CONbits.PEN     = 0; // Stop Condition Not In Progress
-// I2C2CONbits.RSEN    = 0; // Repeated Start Condition Not In Progress
-// I2C2CONbits.SEN     = 0; // Start Condition Not In Progress 
-// _MI2C2IE = 1; // Enable Master Interrupts
-// _MI2C2IP = 1; // Interrupt Priority 6
-// _MI2C2IF = 0; // Clear I2C Flag
-// _SI2C2IE = 0; // Disable Slave Interrupts 
-// I2C2BRG = 0x188; 
-// I2C2CONbits.I2CEN = 1;   // Enable I2C
-// } 
 void initI2C(){
     SCL = 0;
     SDA = 0;
@@ -56,10 +30,10 @@ void initI2C(){
     I2C2BRG = 145;    
 }
 
-void writeByte(char reg, char data){
+void i2cWrite(char regAddress, char data){
     beginTransmission(VCNL4000_ADDRESS); //Start Bit and slave address
     if(I2C2STATbits.ACKSTAT == 0){
-        send(reg); //Sends Data to the device
+        send(regAddress); //Sends Data to the device
     }
     if(I2C2STATbits.ACKSTAT == 0){
         send(data);
@@ -68,12 +42,12 @@ void writeByte(char reg, char data){
    
 }
 //Read Data from I2C device
-unsigned char readByte(char reg){
-    char c;
+unsigned char i2cRead(char regAddress){
+    char data;
 
     beginTransmission(VCNL4000_ADDRESS);
     if(I2C2STATbits.ACKSTAT == 0){
-        send(reg);
+        send(regAddress);
     }
     if(I2C2STATbits.ACKSTAT == 0){
         endTransmission();
@@ -83,24 +57,29 @@ unsigned char readByte(char reg){
         I2C2CONbits.RCEN = 1;
         //while(I2C2CONbits.RCEN);
         while(I2C2STATbits.RBF == 0);
-        c = I2C2RCV;
+        data = I2C2RCV;
     }
     masterACK();
     endTransmission();
-    return c;
+    return data;
 }
 
 //Start writing data
- void beginTransmission(char saddress){
+ void beginTransmission(char i2cAddress){
     //Start bit
     I2C2CONbits.SEN = 1;
     while(I2C2CONbits.SEN);
+    IFS1bits.I2C2MIF = 0;
     //SlaveAddress
-    I2C2TRN = saddress << 1 | WRITE;
-    while(I2C2STATbits.TRSTAT == 1); //Wait for address to be sent
+    I2C2TRN = i2cAddress << 1 | WRITE;
+    if(I2C2STATbits.IWCOL == 1){
+        I2C2STATbits.IWCOL = 0;
+    }
+    while (IFS1bits.I2C2MIF == 0);
+    //while(I2C2STATbits.TRSTAT == 1); //Wait for address to be sent
 }
- void send(char address){
-    I2C2TRN = address; //Send Slave address //Start transmitting when somethign is inserted
+ void send(char i2cAddress){
+    I2C2TRN = i2cAddress; //Send Slave address //Start transmitting when somethign is inserted
     while(I2C2STATbits.TRSTAT == 1); //Wait for address to be sent
  }
  void endTransmission(){
@@ -109,14 +88,14 @@ unsigned char readByte(char reg){
       delayUs(900);
  }
  //Starts the procedure to get information from the specefic sensor
-void requestFrom(char saddress){
+void requestFrom(char i2cAddress){
      //Start bit
     I2C2CONbits.SEN = 1;
     while(I2C2CONbits.SEN);
 //    while(IFS3bits.MI2C2IF == 0);
 //    IFS3bits.MI2C2IF = 0;
 
-    I2C2TRN = saddress << 1 | READ;
+    I2C2TRN = i2cAddress << 1 | READ;
     while(I2C2STATbits.TRSTAT == 1); //Wait for address to be sent
  }
 //Master Acknowledgement
