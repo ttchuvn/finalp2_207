@@ -3,20 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/ECE372/finalp2_207/main.c</file>
             <file>file:/D:/ECE372/finalp2_207/leds.c</file>
+            <file>file:/D:/ECE372/finalp2_207/main.c</file>
             <file>file:/D:/ECE372/finalp2_207/leds.h</file>
-            <file>file:/D:/ECE372/finalp2_207/switch.h</file>
-            <file>file:/D:/ECE372/finalp2_207/nbproject/Makefile-default.mk</file>
-            <file>file:/D:/ECE372/finalp2_207/VCNL4000.c</file>
-            <file>file:/D:/ECE372/finalp2_207/lcd.c</file>
-            <file>file:/D:/ECE372/finalp2_207/VCNL4000.h</file>
-            <file>file:/D:/ECE372/finalp2_207/pwm.c</file>
             <file>file:/D:/ECE372/finalp2_207/pwm.h</file>
+            <file>file:/D:/ECE372/finalp2_207/switch.h</file>
             <file>file:/D:/ECE372/finalp2_207/timer.c</file>
-            <file>file:/D:/ECE372/finalp2_207/I2C.c</file>
-            <file>file:/D:/ECE372/finalp2_207/I2C.h</file>
+            <file>file:/D:/ECE372/finalp2_207/nbproject/Makefile-default.mk</file>
+            <file>file:/D:/ECE372/finalp2_207/lcd.c</file>
             <file>file:/D:/ECE372/finalp2_207/adc.c</file>
+            <file>file:/D:/ECE372/finalp2_207/pwm.c</file>
         </group>
     </open-files>
 </project-private>

@@ -44,10 +44,10 @@ unsigned int readAmbient(){
 
     temp = i2cRead(COMMAND_0);
     i2cWrite(COMMAND_0, 0b10010000 /*temp | 0x10*/); // command the sensor to perform ambient measure
-//
-//    while(!(i2cRead(COMMAND_0)&0b01000000) /*0x20*/); // wait for the proximity data ready bit to be set
-//    data = i2cRead(AMBIENT_RESULT_MSB) << 8;
-//    data |= i2cRead(AMBIENT_RESULT_LSB);
-    data = 200;
+
+    while(!(i2cRead(COMMAND_0)&0b01000000) /*0x20*/); // wait for the proximity data ready bit to be set
+    data = i2cRead(AMBIENT_RESULT_MSB) << 8;
+    data |= i2cRead(AMBIENT_RESULT_LSB);
+    //data = 200;
     return data;
 }
